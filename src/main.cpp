@@ -15,6 +15,7 @@ Servo servo01;
 void GET_locked_running(void *param);
 void Connect_Wifi();
 TaskHandle_t TaskLockedRunning = NULL;
+int sensor_ultrasonic;
 int save_id = 1;
 int locked;
 
@@ -22,15 +23,13 @@ int locked;
 void PUT_Status(){
   String json;
   DynamicJsonDocument doc(65203);
-  doc["safe_id"] = Id;
-  doc["flame_alert"] = sensor_flame;
-  doc["humid_alert"] = sensor_humid;
-  doc["temp_alert"] = sensor_temp;
-  doc["ultrasonic_alert"] = 0;
-  
+  /*
+  just put
+  doc["ultrasonic_alert"] = sensor_ultrasonic;
+  */
   serializeJson(doc,json);
 
-  const String url = "https://ecourse.cpe.ku.ac.th/exceed04/alert";
+  const String url = "https://ecourse.cpe.ku.ac.th/exceed04/alert";// change end pont
   HTTPClient http;
   http.begin(url);
 
@@ -93,8 +92,19 @@ void loop(){
   
   long RangeInCentimeters;
   RangeInCentimeters = ultrasonic.MeasureInCentimeters();
-  Serial.println(RangeInCentimeters);
-  vTaskDelay(1000 / portTICK_PERIOD_MS);
+  if (RangeInCentimeters < 7){
+    //sensor_ultrasonic = 1;
+    //PUT
+  }else{
+    //sensor_ultrasonic = 0;
+    //PUT
+  }
+  if (locked){
+    //servo close
+  }else if (locked == 0){
+    //servo open
+  }
+  vTaskDelay(100 / portTICK_PERIOD_MS);
   
 
  
